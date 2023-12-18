@@ -5,6 +5,7 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, MaxPooling2D, Activation, Dropout, Flatten, Dense
 
 # Define the base directory where the folders are located
 base_dir = '../resources/Images/'
@@ -36,6 +37,9 @@ for folder_name in os.listdir(base_dir):
 images = np.array(images)
 labels = np.array(labels)
 
+# Normalize pixel values to be between 0 and 1
+images = images / 255.0
+
 # Encode the labels into integers
 label_encoder = LabelEncoder()
 integer_encoded_labels = label_encoder.fit_transform(labels)
@@ -45,17 +49,39 @@ one_hot_encoded_labels = to_categorical(integer_encoded_labels)
 # Split the dataset into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(images, one_hot_encoded_labels, test_size=0.2, random_state=42)
 
-# Define your model (this is just a placeholder, you'll need to define your actual model architecture)
+# The number of unique breeds
+num_classes = y_train.shape[1]
+
+# Define a simple CNN model
 model = Sequential([
-    # Your model layers go here
+    Conv2D(32, (3, 3), input_shape=(224, 224, 3)),
+    Activation('relu'),
+    MaxPooling2D(pool_size=(2, 2)),
+
+    Conv2D(64, (3, 3)),
+    Activation('relu'),
+    MaxPooling2D(pool_size=(2, 2)),
+
+    Conv2D(128, (3, 3)),
+    Activation('relu'),
+    MaxPooling2D(pool_size=(2, 2)),
+
+    Flatten(),
+    Dense(512),
+    Activation('relu'),
+    Dropout(0.5),
+    Dense(num_classes),
+    Activation('softmax')
 ])
 
-# Compile your model (placeholder values, you'll need to choose the actual loss function and optimizer)
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+# Compile the model
+model.compile(loss='categorical_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
 
-# Train your model
+# Train the model
 model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=10)
 
-# Evaluate your model
+# Evaluate the model
 score = model.evaluate(X_test, y_test)
 print('Test accuracy:', score[1])
