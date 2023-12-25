@@ -5,14 +5,16 @@ from tensorflow.keras.utils import to_categorical
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Activation, Dropout, Flatten, Dense
+from tensorflow.keras.layers import Conv2D, Activation, MaxPooling2D, Flatten, Dense, Dropout
+
 
 # Define the base directory where the folders are located
-base_dir = '../resources/Images/'
+base_dir = './resources/Images/'
 
 # Initialize lists to hold the images and labels
 images = []
 labels = []
+
 
 # Loop over the folders
 for folder_name in os.listdir(base_dir):
@@ -28,6 +30,7 @@ for folder_name in os.listdir(base_dir):
             # Make sure it's a file and not a directory
             if os.path.isfile(image_path):
                 # Read and preprocess the image
+                print(image_path)
                 image = cv2.imread(image_path)
                 image = cv2.resize(image, (224, 224))  # Resize the image to fit the model input
                 images.append(image)
@@ -51,6 +54,8 @@ X_train, X_test, y_train, y_test = train_test_split(images, one_hot_encoded_labe
 
 # The number of unique breeds
 num_classes = y_train.shape[1]
+
+print(num_classes)
 
 # Define a simple CNN model
 model = Sequential([
