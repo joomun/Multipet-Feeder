@@ -84,8 +84,11 @@ model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-# Train the model
-model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=10)
+# Define batch size
+batch_size = 13  # You can adjust the batch size according to your system's memory
+
+# Train the model with batch processing
+model.fit(X_train, y_train, batch_size=batch_size, validation_data=(X_test, y_test), epochs=10)
 
 # Evaluate the model
 score = model.evaluate(X_test, y_test)
